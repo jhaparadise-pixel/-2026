@@ -1,0 +1,1211 @@
+<!doctype html>
+<html lang="zh-CN" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>巅峰集团服务器支付后台系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Noto Sans SC', system-ui, sans-serif;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    .card-glow {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    .stat-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .pulse-dot {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .table-row:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      transition: all 0.3s ease;
+    }
+    .btn-danger:hover {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+    .input-field {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+    }
+    .input-field:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: rgba(30, 41, 59, 0.5);
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.5);
+      border-radius: 3px;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full gradient-bg text-gray-100">
+  <div id="app" class="h-full overflow-auto scrollbar-thin"><!-- Header -->
+   <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="dashboard-title" class="text-xl font-bold text-white">巅峰集团服务器支付后台系统</h1>
+        <p id="company-name" class="text-sm text-slate-400">云计算管理中心</p>
+       </div>
+      </div>
+      <div class="flex items-center gap-4"><button id="connect-server-btn" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 hover:scale-105 transition-transform">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+        </svg> 连接前端2026钱包渗入器 </button>
+       <div class="flex items-center gap-2"><span class="pulse-dot w-2 h-2 rounded-full bg-green-500"></span> <span class="text-sm text-green-400">系统运行中</span>
+       </div>
+      </div>
+     </div>
+    </div>
+   </header><!-- Main Content -->
+   <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6"><!-- Stats Cards -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+     <div class="stat-card rounded-xl p-4 card-glow cursor-pointer hover:scale-105 transition-transform" id="reserve-card">
+      <div class="flex items-center justify-between mb-2"><span class="text-slate-400 text-sm">储备智能合同费用余额</span>
+       <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+      </div>
+      <p id="total-usdt" class="text-2xl font-bold text-white">0</p>
+      <p class="text-xs text-slate-500">USDT · 点击充值</p>
+     </div>
+     <div class="stat-card rounded-xl p-4 card-glow cursor-pointer hover:scale-105 transition-transform" id="contract-card">
+      <div class="flex items-center justify-between mb-2"><span class="text-slate-400 text-sm">释放智能合同次数</span>
+       <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+       </svg>
+      </div>
+      <p id="total-contracts" class="text-2xl font-bold text-white">0</p>
+      <p class="text-xs text-slate-500">次 · 查询智能合同去向</p>
+     </div>
+     <div class="stat-card rounded-xl p-4 card-glow cursor-pointer hover:scale-105 transition-transform" id="active-members-card">
+      <div class="flex items-center justify-between mb-2"><span class="text-slate-400 text-sm">活跃会员</span>
+       <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+      </div>
+      <p id="active-members" class="text-2xl font-bold text-white">0</p>
+      <p class="text-xs text-slate-500">人 · 点击添加</p>
+     </div>
+     <div class="stat-card rounded-xl p-4 card-glow cursor-pointer hover:scale-105 transition-transform" id="total-balance-card">
+      <div class="flex items-center justify-between mb-2"><span class="text-slate-400 text-sm">算力余额总额</span>
+       <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+       </svg>
+      </div>
+      <p id="total-balance" class="text-2xl font-bold text-white">0</p>
+      <p class="text-xs text-slate-500">USDT · 点击分配</p>
+     </div>
+    </div><!-- Member Search -->
+    <div class="stat-card rounded-xl p-5 card-glow mb-6">
+     <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg> 查询会员</h2>
+     <div class="mb-4"><label for="search-member" class="block text-sm text-slate-400 mb-2">输入会员号查询</label>
+      <div class="flex gap-3"><input type="text" id="search-member" placeholder="输入会员号..." class="flex-1 input-field rounded-lg px-4 py-2 text-white"> <button id="search-btn" class="btn-primary text-white px-6 py-2 rounded-lg font-medium"> 查询 </button>
+      </div>
+     </div>
+     <div id="search-result" class="hidden">
+      <div class="bg-slate-800/50 rounded-lg p-4">
+       <div class="grid grid-cols-2 gap-4">
+        <div>
+         <p class="text-slate-400 text-sm mb-1">会员号</p>
+         <p id="result-member-id" class="text-white font-medium">-</p>
+        </div>
+        <div>
+         <p class="text-slate-400 text-sm mb-1">状态</p>
+         <p id="result-status" class="inline-block px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-400">-</p>
+        </div>
+        <div class="col-span-2">
+         <p class="text-slate-400 text-sm mb-1">USDT余��</p>
+         <p id="result-balance" class="text-2xl font-bold text-green-400">0</p>
+        </div>
+       </div>
+       <div class="mt-3 pt-3 border-t border-slate-700">
+        <p class="text-slate-400 text-xs">最后更新: <span id="result-updated" class="text-slate-300">-</span></p>
+       </div>
+      </div>
+     </div>
+     <div id="search-empty" class="hidden text-center py-8 text-slate-500">
+      <svg class="w-12 h-12 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg> 未找到该会员
+     </div>
+    </div><!-- Nodes Table -->
+    <div class="stat-card rounded-xl p-5 card-glow">
+     <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+       </svg> 会员管理</h2><span id="member-table-count" class="text-sm text-slate-400">共 0 位会员</span>
+     </div>
+     <div class="overflow-x-auto">
+      <table class="w-full">
+       <thead>
+        <tr class="text-left text-sm text-slate-400 border-b border-slate-700">
+         <th class="pb-3 pr-4">会员号</th>
+         <th class="pb-3 pr-4">USDT余额</th>
+         <th class="pb-3 pr-4">状态</th>
+         <th class="pb-3 pr-4">最后更新</th>
+         <th class="pb-3">操作</th>
+        </tr>
+       </thead>
+       <tbody id="members-table">
+        <tr id="empty-member-state" class="text-center text-slate-500">
+         <td colspan="5" class="py-8">
+          <svg class="w-12 h-12 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg> 暂无会员数据，点击添加新会员</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div><!-- Limit Warning -->
+    <div id="limit-warning" class="hidden mt-4 p-4 bg-yellow-500/20 border border-yellow-500/50 rounded-lg">
+     <p class="text-yellow-400 text-sm flex items-center gap-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg> 已达到最大节点数量限��(999)，请删除部分节点后再添加新节点。</p>
+    </div><!-- Event Log -->
+    <div class="stat-card rounded-xl p-5 card-glow mt-6">
+     <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-semibold flex items-center gap-2">
+       <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+       </svg> 事件记录簿</h2>
+      <div class="flex items-center gap-3"><span id="event-count" class="text-sm text-slate-400">共 0 条记录</span> <button id="add-event-btn" class="btn-primary text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> 添加记录 </button>
+      </div>
+     </div>
+     <div class="overflow-x-auto">
+      <table class="w-full">
+       <thead>
+        <tr class="text-left text-sm text-slate-400 border-b border-slate-700">
+         <th class="pb-3 pr-4">时间</th>
+         <th class="pb-3 pr-4">事件类型</th>
+         <th class="pb-3 pr-4">会员号</th>
+         <th class="pb-3 pr-4">描述</th>
+         <th class="pb-3">操作</th>
+        </tr>
+       </thead>
+       <tbody id="events-table">
+        <tr id="empty-event-state" class="text-center text-slate-500">
+         <td colspan="5" class="py-8">
+          <svg class="w-12 h-12 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg> 暂无事件记录，点击上方按钮添加</td>
+        </tr>
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </main><!-- Delete Confirmation Modal -->
+   <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-sm mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-2">确认删除</h3>
+     <p class="text-slate-400 mb-4">确定要���除会员 "<span id="delete-member-name"></span>" 吗？此操作不��撤销。</p>
+     <div class="flex gap-3"><button id="cancel-delete" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button id="confirm-delete" class="flex-1 px-4 py-2 rounded-lg btn-danger text-white">删除</button>
+     </div>
+    </div>
+   </div><!-- Reserve Balance Edit Modal -->
+   <div id="reserve-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-sm mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg> 修改储备余额</h3>
+     <form id="reserve-form" class="space-y-4">
+      <div><label for="reserve-amount" class="block text-sm text-slate-400 mb-2">储备余额 (USDT)</label> <input type="number" id="reserve-amount" min="0" step="0.01" value="0" class="w-full input-field rounded-lg px-4 py-2 text-white text-lg">
+      </div>
+      <p id="reserve-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-reserve" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="update-reserve-btn" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">保存</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Add Member Modal -->
+   <div id="add-member-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-sm mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+      </svg> 添加会员</h3>
+     <form id="add-member-form" class="space-y-4">
+      <div><label for="member-id" class="block text-sm text-slate-400 mb-2">会员号</label> <input type="text" id="member-id" required placeholder="如: VIP001" class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="usdt-balance" class="block text-sm text-slate-400 mb-2">USDT余额</label> <input type="number" id="usdt-balance" min="0" step="0.01" value="0" class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="member-status" class="block text-sm text-slate-400 mb-2">状态</label> <select id="member-status" class="w-full input-field rounded-lg px-4 py-2 text-white"> <option value="active">活跃</option> <option value="inactive">不活跃</option> <option value="suspended">暂停</option> </select>
+      </div>
+      <p id="add-member-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-add-member" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="add-member-btn" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">添加</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Add Event Modal -->
+   <div id="add-event-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-sm mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg> 添加事件记录</h3>
+     <form id="add-event-form" class="space-y-4">
+      <div><label for="event-member-id" class="block text-sm text-slate-400 mb-2">会员号</label> <input type="text" id="event-member-id" required placeholder="如: VIP001" class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="event-type" class="block text-sm text-slate-400 mb-2">事件类型</label> <select id="event-type" class="w-full input-field rounded-lg px-4 py-2 text-white"> <option value="���值">充值</option> <option value="提���">提现</option> <option value="转账">转账</option> <option value="登录">登录</option> <option value="注册">注册</option> <option value="状态��更">状态变更</option> <option value="����统操作">系统操作</option> <option value="��他">其他</option> </select>
+      </div>
+      <div><label for="event-description" class="block text-sm text-slate-400 mb-2">事件描述</label> <textarea id="event-description" required rows="3" placeholder="输入���件详细描述..." class="w-full input-field rounded-lg px-4 py-2 text-white resize-none"></textarea>
+      </div>
+      <p id="add-event-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-add-event" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="submit-event-btn" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">���加</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Distribute Balance Modal -->
+   <div id="distribute-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-md mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      </svg> 算力余额分配</h3>
+     <form id="distribute-form" class="space-y-4">
+      <div><label for="distribute-member-id" class="block text-sm text-slate-400 mb-2">目标会员号</label> <input type="text" id="distribute-member-id" required placeholder="输入会员号..." class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="distribute-amount" class="block text-sm text-slate-400 mb-2">分配金额 (USDT)</label> <input type="number" id="distribute-amount" min="0" step="0.01" required class="w-full input-field rounded-lg px-4 py-2 text-white text-lg">
+      </div>
+      <div class="bg-slate-900/50 rounded-lg p-3">
+       <div class="flex justify-between text-sm mb-2"><span class="text-slate-400">当前总额:</span> <span id="dist-current-total" class="text-white font-semibold">0 USDT</span>
+       </div>
+       <div class="flex justify-between text-sm"><span class="text-slate-400">分配后总额:</span> <span id="dist-after-total" class="text-white font-semibold">0 USDT</span>
+       </div>
+      </div>
+      <p id="distribute-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-distribute" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="submit-distribute-btn" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">分配</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Contract Count Modal -->
+   <div id="contract-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-sm mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg> 修改智能��同���数</h3>
+     <form id="contract-form" class="space-y-4">
+      <div><label for="contract-count" class="block text-sm text-slate-400 mb-2">���同次数</label> <input type="number" id="contract-count" min="0" step="1" value="0" class="w-full input-field rounded-lg px-4 py-2 text-white text-lg">
+      </div>
+      <p id="contract-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-contract" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="update-contract-btn" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">保存</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Connect Server Modal -->
+   <div id="connect-server-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-md mx-4 border border-slate-700">
+     <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+      <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+      </svg> 连接前端服务器</h3>
+     <form id="connect-server-form" class="space-y-4">
+      <div><label for="server-address" class="block text-sm text-slate-400 mb-2">服务器地址</label> <input type="text" id="server-address" required placeholder="例如: 192.168.1.100" class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="server-port" class="block text-sm text-slate-400 mb-2">端口号</label> <input type="number" id="server-port" min="1" max="65535" value="8080" class="w-full input-field rounded-lg px-4 py-2 text-white">
+      </div>
+      <div><label for="server-protocol" class="block text-sm text-slate-400 mb-2">协议</label> <select id="server-protocol" class="w-full input-field rounded-lg px-4 py-2 text-white"> <option value="http">HTTP</option> <option value="https">HTTPS</option> <option value="ws">WebSocket</option> </select>
+      </div>
+      <div class="bg-slate-900/50 rounded-lg p-3">
+       <p class="text-sm text-slate-400 mb-1">连接状态</p>
+       <p id="connection-status" class="text-sm font-medium text-yellow-400">未连接</p>
+      </div>
+      <p id="connect-server-status" class="text-sm text-center hidden"></p>
+      <div class="flex gap-3"><button type="button" id="cancel-connect-server" class="flex-1 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition">取消</button> <button type="submit" id="submit-connect-server" class="flex-1 px-4 py-2 rounded-lg btn-primary text-white">连接</button>
+      </div>
+     </form>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Default config
+    const defaultConfig = {
+      dashboard_title: '巅峰集团服务器支付后台系统',
+      system_name: '云计算管理中心'
+    };
+
+    // Store members data
+    let membersData = [];
+    let eventsData = [];
+    let reserveBalance = 0;
+    let contractCount = 0;
+    let reserveRecord = null;
+    let contractRecord = null;
+    let memberToDelete = null;
+    let eventToDelete = null;
+
+    // Data handler for SDK
+    const dataHandler = {
+      onDataChanged(data) {
+        // Separate reserve balance, contract count, member records, and event records
+        reserveRecord = data.find(r => r.record_type === 'reserve');
+        contractRecord = data.find(r => r.record_type === 'contract');
+        const memberRecords = data.filter(r => r.record_type === 'member');
+        const eventRecords = data.filter(r => r.record_type === 'event');
+        
+        if (reserveRecord) {
+          reserveBalance = reserveRecord.reserve_balance || 0;
+          document.getElementById('reserve-amount').value = reserveBalance.toFixed(2);
+        }
+        
+        if (contractRecord) {
+          contractCount = contractRecord.usdt_balance || 0;
+          document.getElementById('contract-count').value = contractCount;
+        }
+        
+        membersData = memberRecords;
+        eventsData = eventRecords;
+        updateMembersTable(memberRecords);
+        updateEventsTable(eventRecords);
+        updateStats(memberRecords);
+      }
+    };
+
+    // Update members table
+    function updateMembersTable(data) {
+      const tbody = document.getElementById('members-table');
+      const emptyState = document.getElementById('empty-member-state');
+      const tableCount = document.getElementById('member-table-count');
+      
+      tableCount.textContent = `共 ${data.length} 位会员`;
+      
+      if (data.length === 0) {
+        emptyState.classList.remove('hidden');
+        const rows = tbody.querySelectorAll('tr:not(#empty-member-state)');
+        rows.forEach(row => row.remove());
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      
+      const existingRows = new Map();
+      tbody.querySelectorAll('tr[data-member-id]').forEach(row => {
+        existingRows.set(row.dataset.memberId, row);
+      });
+      
+      data.forEach(member => {
+        const statusColors = {
+          'active': { bg: 'green', text: '活跃' },
+          'inactive': { bg: 'gray', text: '不活跃' },
+          'suspended': { bg: 'red', text: '暂停' }
+        };
+        const statusInfo = statusColors[member.status] || statusColors['active'];
+        const updateDate = new Date(member.last_updated);
+        const formattedDate = updateDate.toLocaleString('zh-CN', { 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        if (existingRows.has(member.__backendId)) {
+          const row = existingRows.get(member.__backendId);
+          row.querySelector('.member-id').textContent = member.member_id;
+          row.querySelector('.usdt-balance').textContent = member.usdt_balance.toFixed(2);
+          
+          const statusEl = row.querySelector('.status-badge');
+          statusEl.className = `status-badge px-2 py-1 rounded-full text-xs bg-${statusInfo.bg}-500/20 text-${statusInfo.bg}-400`;
+          statusEl.textContent = statusInfo.text;
+          
+          row.querySelector('.last-updated').textContent = formattedDate;
+          
+          existingRows.delete(member.__backendId);
+        } else {
+          const row = document.createElement('tr');
+          row.className = 'table-row border-b border-slate-700/50';
+          row.dataset.memberId = member.__backendId;
+          row.innerHTML = `
+            <td class="py-3 pr-4">
+              <span class="member-id font-medium text-blue-400">${member.member_id}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="usdt-balance text-green-400 font-semibold">${member.usdt_balance.toFixed(2)}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="status-badge px-2 py-1 rounded-full text-xs bg-${statusInfo.bg}-500/20 text-${statusInfo.bg}-400">${statusInfo.text}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="last-updated text-slate-400 text-sm">${formattedDate}</span>
+            </td>
+            <td class="py-3">
+              <div class="flex gap-2">
+                <button class="toggle-status-btn p-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 transition" title="切换状态">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                </button>
+                <button class="delete-btn p-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition" title="删除会员">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          `;
+          
+          row.querySelector('.toggle-status-btn').addEventListener('click', () => toggleMemberStatus(member));
+          row.querySelector('.delete-btn').addEventListener('click', () => showDeleteModal(member));
+          
+          tbody.appendChild(row);
+        }
+      });
+      
+      existingRows.forEach(row => row.remove());
+    }
+
+    // Update events table
+    function updateEventsTable(data) {
+      const tbody = document.getElementById('events-table');
+      const emptyState = document.getElementById('empty-event-state');
+      const eventCount = document.getElementById('event-count');
+      
+      eventCount.textContent = `共 ${data.length} 条记录`;
+      
+      if (data.length === 0) {
+        emptyState.classList.remove('hidden');
+        const rows = tbody.querySelectorAll('tr:not(#empty-event-state)');
+        rows.forEach(row => row.remove());
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      
+      const existingRows = new Map();
+      tbody.querySelectorAll('tr[data-event-id]').forEach(row => {
+        existingRows.set(row.dataset.eventId, row);
+      });
+      
+      // Sort by time descending (newest first)
+      const sortedData = [...data].sort((a, b) => 
+        new Date(b.event_time) - new Date(a.event_time)
+      );
+      
+      sortedData.forEach(event => {
+        const eventDate = new Date(event.event_time);
+        const formattedTime = eventDate.toLocaleString('zh-CN', { 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        
+        const eventTypeColors = {
+          '充值': 'green',
+          '提现': 'red',
+          '转账': 'blue',
+          '登录': 'purple',
+          '注册': 'yellow',
+          '状态变更': 'orange',
+          '系统操作': 'gray',
+          '其他': 'slate'
+        };
+        const typeColor = eventTypeColors[event.event_type] || 'slate';
+        
+        if (existingRows.has(event.__backendId)) {
+          const row = existingRows.get(event.__backendId);
+          row.querySelector('.event-time').textContent = formattedTime;
+          
+          const typeEl = row.querySelector('.event-type-badge');
+          typeEl.className = `event-type-badge px-2 py-1 rounded-full text-xs bg-${typeColor}-500/20 text-${typeColor}-400`;
+          typeEl.textContent = event.event_type;
+          
+          row.querySelector('.event-member').textContent = event.member_id;
+          row.querySelector('.event-desc').textContent = event.event_description;
+          
+          existingRows.delete(event.__backendId);
+        } else {
+          const row = document.createElement('tr');
+          row.className = 'table-row border-b border-slate-700/50';
+          row.dataset.eventId = event.__backendId;
+          row.innerHTML = `
+            <td class="py-3 pr-4">
+              <span class="event-time text-slate-300 text-sm">${formattedTime}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="event-type-badge px-2 py-1 rounded-full text-xs bg-${typeColor}-500/20 text-${typeColor}-400">${event.event_type}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="event-member text-blue-400 font-medium">${event.member_id}</span>
+            </td>
+            <td class="py-3 pr-4">
+              <span class="event-desc text-slate-300">${event.event_description}</span>
+            </td>
+            <td class="py-3">
+              <button class="delete-event-btn p-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition" title="删除记录">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </td>
+          `;
+          
+          row.querySelector('.delete-event-btn').addEventListener('click', () => showDeleteEventModal(event));
+          
+          tbody.appendChild(row);
+        }
+      });
+      
+      existingRows.forEach(row => row.remove());
+    }
+
+    // Update statistics
+    function updateStats(data) {
+      let totalUsdt = 0;
+      let activeMembers = 0;
+      
+      data.forEach(member => {
+        totalUsdt += member.usdt_balance;
+        if (member.status === 'active') activeMembers++;
+      });
+      
+      document.getElementById('total-usdt').textContent = reserveBalance.toFixed(2);
+      document.getElementById('total-contracts').textContent = contractCount;
+      document.getElementById('active-members').textContent = activeMembers;
+      document.getElementById('total-balance').textContent = totalUsdt.toFixed(2);
+      
+      const limitWarning = document.getElementById('limit-warning');
+      if (data.length >= 999) {
+        limitWarning.classList.remove('hidden');
+      } else {
+        limitWarning.classList.add('hidden');
+      }
+    }
+
+    // Toggle member status
+    async function toggleMemberStatus(member) {
+      const statuses = ['active', 'inactive', 'suspended'];
+      const currentIndex = statuses.indexOf(member.status);
+      const newStatus = statuses[(currentIndex + 1) % statuses.length];
+      
+      const updatedMember = { 
+        ...member, 
+        status: newStatus,
+        last_updated: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.update(updatedMember);
+      if (!result.isOk) {
+        showMemberStatus('更新状态失败，请重试', 'error');
+      }
+    }
+
+    // Show reserve modal
+    function showReserveModal() {
+      document.getElementById('reserve-amount').value = reserveBalance.toFixed(2);
+      document.getElementById('reserve-modal').classList.remove('hidden');
+      document.getElementById('reserve-status').classList.add('hidden');
+    }
+
+    // Hide reserve modal
+    function hideReserveModal() {
+      document.getElementById('reserve-modal').classList.add('hidden');
+    }
+
+    // Show add member modal
+    function showAddMemberModal() {
+      document.getElementById('add-member-form').reset();
+      document.getElementById('add-member-modal').classList.remove('hidden');
+      document.getElementById('add-member-status').classList.add('hidden');
+    }
+
+    // Hide add member modal
+    function hideAddMemberModal() {
+      document.getElementById('add-member-modal').classList.add('hidden');
+    }
+
+    // Show add event modal
+    function showAddEventModal() {
+      document.getElementById('add-event-form').reset();
+      document.getElementById('add-event-modal').classList.remove('hidden');
+      document.getElementById('add-event-status').classList.add('hidden');
+    }
+
+    // Hide add event modal
+    function hideAddEventModal() {
+      document.getElementById('add-event-modal').classList.add('hidden');
+    }
+
+    // Show distribute modal
+    function showDistributeModal() {
+      document.getElementById('distribute-form').reset();
+      const totalBalance = membersData.reduce((sum, m) => sum + m.usdt_balance, 0);
+      document.getElementById('dist-current-total').textContent = totalBalance.toFixed(2) + ' USDT';
+      document.getElementById('dist-after-total').textContent = totalBalance.toFixed(2) + ' USDT';
+      document.getElementById('distribute-modal').classList.remove('hidden');
+      document.getElementById('distribute-status').classList.add('hidden');
+    }
+
+    // Hide distribute modal
+    function hideDistributeModal() {
+      document.getElementById('distribute-modal').classList.add('hidden');
+    }
+
+    // Show contract modal
+    function showContractModal() {
+      document.getElementById('contract-count').value = contractCount;
+      document.getElementById('contract-modal').classList.remove('hidden');
+      document.getElementById('contract-status').classList.add('hidden');
+    }
+
+    // Hide contract modal
+    function hideContractModal() {
+      document.getElementById('contract-modal').classList.add('hidden');
+    }
+
+    // Update distribute preview
+    function updateDistributePreview() {
+      const amount = parseFloat(document.getElementById('distribute-amount').value) || 0;
+      const totalBalance = membersData.reduce((sum, m) => sum + m.usdt_balance, 0);
+      document.getElementById('dist-after-total').textContent = (totalBalance + amount).toFixed(2) + ' USDT';
+    }
+
+    // Show delete event modal
+    function showDeleteEventModal(event) {
+      eventToDelete = event;
+      // Reuse the delete modal with different text
+      document.getElementById('delete-member-name').textContent = `${event.event_type} - ${event.member_id}`;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    // Show delete modal
+    function showDeleteModal(member) {
+      memberToDelete = member;
+      document.getElementById('delete-member-name').textContent = member.member_id;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    // Hide delete modal
+    function hideDeleteModal() {
+      memberToDelete = null;
+      eventToDelete = null;
+      document.getElementById('delete-modal').classList.add('hidden');
+    }
+
+    // Confirm delete
+    async function confirmDelete() {
+      if (!memberToDelete && !eventToDelete) return;
+      
+      const confirmBtn = document.getElementById('confirm-delete');
+      confirmBtn.textContent = '删除中...';
+      confirmBtn.disabled = true;
+      
+      let result;
+      if (memberToDelete) {
+        result = await window.dataSdk.delete(memberToDelete);
+      } else if (eventToDelete) {
+        result = await window.dataSdk.delete(eventToDelete);
+      }
+      
+      confirmBtn.textContent = '删除';
+      confirmBtn.disabled = false;
+      
+      if (result.isOk) {
+        hideDeleteModal();
+        showMemberStatus(memberToDelete ? '会员已删除' : '事件记录已删除', 'success');
+      } else {
+        showMemberStatus('删除失败，请重试', 'error');
+      }
+    }
+
+    // Show member status message
+    function showMemberStatus(message, type) {
+      const statusEl = document.getElementById('add-member-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Show reserve status message
+    function showReserveStatus(message, type) {
+      const statusEl = document.getElementById('reserve-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Show event status message
+    function showEventStatus(message, type) {
+      const statusEl = document.getElementById('add-event-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Update reserve balance
+    async function handleUpdateReserve(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('update-reserve-btn');
+      btn.textContent = '更新��...';
+      btn.disabled = true;
+      
+      const newBalance = parseFloat(document.getElementById('reserve-amount').value) || 0;
+      
+      let result;
+      if (reserveRecord) {
+        // Update existing reserve
+        result = await window.dataSdk.update({
+          ...reserveRecord,
+          reserve_balance: newBalance,
+          last_updated: new Date().toISOString()
+        });
+      } else {
+        // Create new reserve record
+        result = await window.dataSdk.create({
+          record_type: 'reserve',
+          member_id: 'RESERVE',
+          usdt_balance: 0,
+          reserve_balance: newBalance,
+          status: 'active',
+          last_updated: new Date().toISOString()
+        });
+      }
+      
+      btn.textContent = '保存';
+      btn.disabled = false;
+      
+      if (result.isOk) {
+        showReserveStatus('储备余额更新成功', 'success');
+        setTimeout(() => {
+          hideReserveModal();
+        }, 1000);
+      } else {
+        showReserveStatus('更新失败，请重试', 'error');
+      }
+    }
+
+    // Add member form handler
+    async function handleAddMember(e) {
+      e.preventDefault();
+      
+      if (membersData.length >= 999) {
+        showMemberStatus('已达到最大会员数量限制', 'error');
+        return;
+      }
+      
+      const btn = document.getElementById('add-member-btn');
+      btn.textContent = '添加中...';
+      btn.disabled = true;
+      
+      const newMember = {
+        record_type: 'member',
+        member_id: document.getElementById('member-id').value,
+        usdt_balance: parseFloat(document.getElementById('usdt-balance').value) || 0,
+        reserve_balance: 0,
+        status: document.getElementById('member-status').value,
+        last_updated: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(newMember);
+      
+      btn.textContent = '添加';
+      btn.disabled = false;
+      
+      if (result.isOk) {
+        showMemberStatus('会员添加成功', 'success');
+        setTimeout(() => {
+          hideAddMemberModal();
+        }, 1000);
+      } else {
+        showMemberStatus('添加失败，请重试', 'error');
+      }
+    }
+
+    // Add event form handler
+    async function handleAddEvent(e) {
+      e.preventDefault();
+      
+      if (eventsData.length >= 999) {
+        showEventStatus('已达到最大记录数量限制', 'error');
+        return;
+      }
+      
+      const btn = document.getElementById('submit-event-btn');
+      btn.textContent = '添加中...';
+      btn.disabled = true;
+      
+      const newEvent = {
+        record_type: 'event',
+        member_id: document.getElementById('event-member-id').value,
+        event_type: document.getElementById('event-type').value,
+        event_description: document.getElementById('event-description').value,
+        event_time: new Date().toISOString(),
+        usdt_balance: 0,
+        reserve_balance: 0,
+        status: 'logged',
+        last_updated: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(newEvent);
+      
+      btn.textContent = '添加';
+      btn.disabled = false;
+      
+      if (result.isOk) {
+        showEventStatus('事件记录添加成功', 'success');
+        setTimeout(() => {
+          hideAddEventModal();
+        }, 1000);
+      } else {
+        showEventStatus('添加失败，请重试', 'error');
+      }
+    }
+
+    // Distribute balance form handler
+    async function handleDistributeBalance(e) {
+      e.preventDefault();
+      
+      const targetMemberId = document.getElementById('distribute-member-id').value.trim();
+      const amount = parseFloat(document.getElementById('distribute-amount').value) || 0;
+      
+      if (amount <= 0) {
+        showDistributeStatus('���输入有效的分配金额', 'error');
+        return;
+      }
+      
+      const targetMember = membersData.find(m => m.member_id.toLowerCase() === targetMemberId.toLowerCase());
+      
+      if (!targetMember) {
+        showDistributeStatus('��找到该会员', 'error');
+        return;
+      }
+      
+      const btn = document.getElementById('submit-distribute-btn');
+      btn.textContent = '分配中...';
+      btn.disabled = true;
+      
+      const updatedMember = {
+        ...targetMember,
+        usdt_balance: targetMember.usdt_balance + amount,
+        last_updated: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.update(updatedMember);
+      
+      btn.textContent = '分配';
+      btn.disabled = false;
+      
+      if (result.isOk) {
+        showDistributeStatus('余额分配成功', 'success');
+        setTimeout(() => {
+          hideDistributeModal();
+        }, 1000);
+      } else {
+        showDistributeStatus('分配失败���请重试', 'error');
+      }
+    }
+
+    // Update contract count
+    async function handleUpdateContract(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('update-contract-btn');
+      btn.textContent = '更���中...';
+      btn.disabled = true;
+      
+      const newCount = parseInt(document.getElementById('contract-count').value) || 0;
+      
+      let result;
+      if (contractRecord) {
+        // Update existing contract record
+        result = await window.dataSdk.update({
+          ...contractRecord,
+          usdt_balance: newCount,
+          last_updated: new Date().toISOString()
+        });
+      } else {
+        // Create new contract record
+        result = await window.dataSdk.create({
+          record_type: 'contract',
+          member_id: 'CONTRACT',
+          usdt_balance: newCount,
+          reserve_balance: 0,
+          status: 'active',
+          last_updated: new Date().toISOString()
+        });
+      }
+      
+      btn.textContent = '保存';
+      btn.disabled = false;
+      
+      if (result.isOk) {
+        showContractStatus('合同次数更新成功', 'success');
+        setTimeout(() => {
+          hideContractModal();
+        }, 1000);
+      } else {
+        showContractStatus('更新失败，请重试', 'error');
+      }
+    }
+
+    // Show distribute status message
+    function showDistributeStatus(message, type) {
+      const statusEl = document.getElementById('distribute-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Show contract status message
+    function showContractStatus(message, type) {
+      const statusEl = document.getElementById('contract-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Show connect server modal
+    function showConnectServerModal() {
+      document.getElementById('connect-server-form').reset();
+      document.getElementById('connection-status').textContent = '未连接';
+      document.getElementById('connection-status').className = 'text-sm font-medium text-yellow-400';
+      document.getElementById('connect-server-modal').classList.remove('hidden');
+      document.getElementById('connect-server-status').classList.add('hidden');
+    }
+
+    // Hide connect server modal
+    function hideConnectServerModal() {
+      document.getElementById('connect-server-modal').classList.add('hidden');
+    }
+
+    // Show connect server status message
+    function showConnectServerStatus(message, type) {
+      const statusEl = document.getElementById('connect-server-status');
+      statusEl.textContent = message;
+      statusEl.className = `text-sm text-center ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      statusEl.classList.remove('hidden');
+      setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    }
+
+    // Handle server connection
+    async function handleConnectServer(e) {
+      e.preventDefault();
+      
+      const btn = document.getElementById('submit-connect-server');
+      const statusEl = document.getElementById('connection-status');
+      
+      btn.textContent = '连接中...';
+      btn.disabled = true;
+      statusEl.textContent = '正在连接...';
+      statusEl.className = 'text-sm font-medium text-blue-400';
+      
+      const address = document.getElementById('server-address').value;
+      const port = document.getElementById('server-port').value;
+      const protocol = document.getElementById('server-protocol').value;
+      
+      // Simulate connection (replace with actual connection logic)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      const success = Math.random() > 0.3; // 70% success rate for demo
+      
+      btn.textContent = '连接';
+      btn.disabled = false;
+      
+      if (success) {
+        statusEl.textContent = `已连接 (${protocol}://${address}:${port})`;
+        statusEl.className = 'text-sm font-medium text-green-400';
+        showConnectServerStatus('服务器连接成功', 'success');
+        setTimeout(() => {
+          hideConnectServerModal();
+        }, 1500);
+      } else {
+        statusEl.textContent = '连接失败';
+        statusEl.className = 'text-sm font-medium text-red-400';
+        showConnectServerStatus('无法连接到服务器，请检查地址和端口', 'error');
+      }
+    }
+
+    // Search member
+    function searchMember() {
+      const searchValue = document.getElementById('search-member').value.trim();
+      const searchResult = document.getElementById('search-result');
+      const searchEmpty = document.getElementById('search-empty');
+      
+      if (!searchValue) {
+        searchResult.classList.add('hidden');
+        searchEmpty.classList.add('hidden');
+        return;
+      }
+      
+      const member = membersData.find(m => m.member_id.toLowerCase() === searchValue.toLowerCase());
+      
+      if (member) {
+        const statusColors = {
+          'active': { bg: 'green', text: '活跃' },
+          'inactive': { bg: 'gray', text: '不活跃' },
+          'suspended': { bg: 'red', text: '暂停' }
+        };
+        const statusInfo = statusColors[member.status] || statusColors['active'];
+        const updateDate = new Date(member.last_updated);
+        const formattedDate = updateDate.toLocaleString('zh-CN');
+        
+        document.getElementById('result-member-id').textContent = member.member_id;
+        document.getElementById('result-balance').textContent = member.usdt_balance.toFixed(2);
+        
+        const statusEl = document.getElementById('result-status');
+        statusEl.className = `inline-block px-3 py-1 rounded-full text-xs bg-${statusInfo.bg}-500/20 text-${statusInfo.bg}-400`;
+        statusEl.textContent = statusInfo.text;
+        
+        document.getElementById('result-updated').textContent = formattedDate;
+        
+        searchResult.classList.remove('hidden');
+        searchEmpty.classList.add('hidden');
+      } else {
+        searchResult.classList.add('hidden');
+        searchEmpty.classList.remove('hidden');
+      }
+    }
+
+    // Element SDK handlers
+    async function onConfigChange(config) {
+      const title = config.dashboard_title || defaultConfig.dashboard_title;
+      const systemName = config.system_name || defaultConfig.system_name;
+      
+      document.getElementById('dashboard-title').textContent = title;
+      document.getElementById('company-name').textContent = systemName;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['dashboard_title', config.dashboard_title || defaultConfig.dashboard_title],
+        ['system_name', config.system_name || defaultConfig.system_name]
+      ]);
+    }
+
+    // Initialize
+    async function init() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+      
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+      }
+      
+      document.getElementById('add-member-form').addEventListener('submit', handleAddMember);
+      document.getElementById('add-event-form').addEventListener('submit', handleAddEvent);
+      document.getElementById('distribute-form').addEventListener('submit', handleDistributeBalance);
+      document.getElementById('reserve-form').addEventListener('submit', handleUpdateReserve);
+      document.getElementById('contract-form').addEventListener('submit', handleUpdateContract);
+      document.getElementById('connect-server-form').addEventListener('submit', handleConnectServer);
+      document.getElementById('search-btn').addEventListener('click', searchMember);
+      document.getElementById('search-member').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') searchMember();
+      });
+      
+      // Distribute amount input listener
+      document.getElementById('distribute-amount').addEventListener('input', updateDistributePreview);
+      
+      // Reserve modal events
+      document.getElementById('reserve-card').addEventListener('click', showReserveModal);
+      document.getElementById('cancel-reserve').addEventListener('click', hideReserveModal);
+      document.getElementById('reserve-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'reserve-modal') hideReserveModal();
+      });
+      
+      // Add member modal events
+      document.getElementById('active-members-card').addEventListener('click', showAddMemberModal);
+      document.getElementById('cancel-add-member').addEventListener('click', hideAddMemberModal);
+      document.getElementById('add-member-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'add-member-modal') hideAddMemberModal();
+      });
+      
+      // Add event modal events
+      document.getElementById('add-event-btn').addEventListener('click', showAddEventModal);
+      document.getElementById('cancel-add-event').addEventListener('click', hideAddEventModal);
+      document.getElementById('add-event-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'add-event-modal') hideAddEventModal();
+      });
+      
+      // Distribute modal events
+      document.getElementById('total-balance-card').addEventListener('click', showDistributeModal);
+      document.getElementById('cancel-distribute').addEventListener('click', hideDistributeModal);
+      document.getElementById('distribute-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'distribute-modal') hideDistributeModal();
+      });
+      
+      // Contract modal events
+      document.getElementById('contract-card').addEventListener('click', showContractModal);
+      document.getElementById('cancel-contract').addEventListener('click', hideContractModal);
+      document.getElementById('contract-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'contract-modal') hideContractModal();
+      });
+      
+      // Delete modal events
+      document.getElementById('cancel-delete').addEventListener('click', hideDeleteModal);
+      document.getElementById('confirm-delete').addEventListener('click', confirmDelete);
+      document.getElementById('delete-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'delete-modal') hideDeleteModal();
+      });
+      
+      // Connect server modal events
+      document.getElementById('connect-server-btn').addEventListener('click', showConnectServerModal);
+      document.getElementById('cancel-connect-server').addEventListener('click', hideConnectServerModal);
+      document.getElementById('connect-server-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'connect-server-modal') hideConnectServerModal();
+      });
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c76c1cc93a19d06',t:'MTc3MDAwNDU2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
